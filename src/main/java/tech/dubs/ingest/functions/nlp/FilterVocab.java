@@ -21,8 +21,10 @@ public class FilterVocab implements Function<List<String>, List<String>> {
         List<String> filtered = new ArrayList<>();
 
         for (String token : param.getValue()) {
-            if (this.vocab.contains(token) && this.keep) {
-                filtered.add(token);
+            if (this.vocab.contains(token)) {
+                if(this.keep){
+                    filtered.add(token);
+                }
             } else if (!this.keep) {
                 filtered.add(token);
             }

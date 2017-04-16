@@ -1,6 +1,6 @@
 package tech.dubs.ingest.pipelines;
 
-import tech.dubs.ingest.api.Pipeline;
+import tech.dubs.ingest.api.Function;
 import tech.dubs.ingest.api.Record;
 import tech.dubs.ingest.util.CallbackValue;
 
@@ -11,13 +11,13 @@ public class PipelineUtils {
     public PipelineUtils() {
     }
 
-    public static <T, O> Record<O> applyPipelineSingle(Pipeline<T, O> pipeline, Record<T> value) {
+    public static <T, O> Record<O> applyPipelineSingle(Function<T, O> pipeline, Record<T> value) {
         CallbackValue<O> callback = new CallbackValue<>();
         pipeline.apply(value, callback);
         return callback.getResult();
     }
 
-    public static <T, O> List<Record<O>> applyPipeline(Pipeline<T, O> pipeline, Record<T> value) {
+    public static <T, O> List<Record<O>> applyPipeline(Function<T, O> pipeline, Record<T> value) {
         CallbackValue<O> callback = new CallbackValue<>();
         pipeline.apply(value, callback);
         return callback.getResults();

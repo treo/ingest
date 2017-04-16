@@ -12,7 +12,7 @@ public class SimpleTokenizer implements Function<String, List<String>> {
     }
 
     public void apply(Record<String> param, ResultCallback<List<String>> callback) {
-        List<String> tokens = Arrays.asList(param.getValue().split("[^\\w]"));
+        List<String> tokens = Arrays.asList(param.getValue().split("[^\\w]+"));
         callback.yield(param.withValue(tokens));
     }
 }
