@@ -4,6 +4,7 @@ import org.junit.Test;
 import tech.dubs.ingest.api.Pipeline;
 import tech.dubs.ingest.api.Record;
 import tech.dubs.ingest.functions.csv.ParseCsvWithHeader;
+import tech.dubs.ingest.functions.generic.ApplyToKeys;
 import tech.dubs.ingest.pipelines.PipelineUtils;
 import tech.dubs.ingest.pipelines.SerialPipeline;
 
@@ -20,7 +21,7 @@ public class ParseCategoricalTest {
     public void collectCategories() throws Exception {
         ParseCsvWithHeader fn = new ParseCsvWithHeader();
         String csv = "id,name,value\n7,foo,bar\n18,spam,eggs\n9,a,bar";
-        List<Record<Map<String, String>>> record = PipelineUtils.applyPipeline(fn, new Record<String>(csv));
+        List<Record<Map<String, String>>> record = PipelineUtils.applyPipeline(fn, new Record<>(csv));
 
         Map<String, List<Object>> categories = ParseCategorical.collectCategories((Iterator)record.iterator(), "value");
         assertEquals(categories.get("value"), Arrays.asList("bar", "eggs"));
@@ -31,11 +32,11 @@ public class ParseCategoricalTest {
         ParseCsvWithHeader fn = new ParseCsvWithHeader();
         String csv = "id,name,value\n7,foo,bar\n18,spam,eggs\n9,a,bar";
         List<Record<Map<String, String>>> record = PipelineUtils.applyPipeline(fn, new Record<String>(csv));
-        Map<String, List<Object>> categories = ParseCategorical.collectCategories((Iterator)record.iterator(), "value");
+        Map<String, List<String>> categories = ParseCategorical.collectCategories((Iterator)record.iterator(), "value");
 
         Pipeline<String, Map<String, Object>> pipeline = new SerialPipeline<String, String>()
                 .add(new ParseCsvWithHeader())
-                .add(new ParseCategorical<>(categories, "value"));
+                .add(new ApplyToKeys<>(new ParseCategorical<>(categories.get("value")), "value"));
 
         List<Record<Map<String, Object>>> records = PipelineUtils.applyPipeline(pipeline, new Record<>(csv));
         Iterator<Map<String, Object>> maps = PipelineUtils.unwrapRecordValues(records.iterator());

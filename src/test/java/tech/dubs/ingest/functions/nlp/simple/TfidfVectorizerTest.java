@@ -1,4 +1,4 @@
-package tech.dubs.ingest.functions.nlp;
+package tech.dubs.ingest.functions.nlp.simple;
 
 import org.junit.Ignore;
 import org.junit.Test;

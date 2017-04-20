@@ -4,6 +4,7 @@ import org.junit.Test;
 import tech.dubs.ingest.api.Pipeline;
 import tech.dubs.ingest.api.Record;
 import tech.dubs.ingest.functions.csv.ParseCsvWithHeader;
+import tech.dubs.ingest.functions.generic.ApplyToKeys;
 import tech.dubs.ingest.pipelines.PipelineUtils;
 import tech.dubs.ingest.pipelines.SerialPipeline;
 
@@ -21,7 +22,7 @@ public class ParseDoubleTest {
         String csv = "id,name,value\n7,foo,bar\n18,spam,eggs\n9,a,bar";
         Pipeline<String, Map<String, Object>> pipeline = new SerialPipeline<String, String>()
                 .add(new ParseCsvWithHeader())
-                .add(new ParseDouble<String>("id"));
+                .add(new ApplyToKeys<>(new ParseDouble(), "id"));
 
         List<Record<Map<String, Object>>> records = PipelineUtils.applyPipeline(pipeline, new Record<>(csv));
         Iterator<Map<String, Object>> maps = PipelineUtils.unwrapRecordValues(records.iterator());

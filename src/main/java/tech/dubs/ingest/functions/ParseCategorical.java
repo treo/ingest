@@ -1,31 +1,31 @@
 package tech.dubs.ingest.functions;
 
+import tech.dubs.ingest.api.Function;
 import tech.dubs.ingest.api.Record;
-import tech.dubs.ingest.functions.generic.SubsetOfColumnsFunction;
+import tech.dubs.ingest.api.ResultCallback;
 
 import java.util.*;
 import java.util.Map.Entry;
 
-public class ParseCategorical<T> extends SubsetOfColumnsFunction<T, String, Object> {
-    private final Map<T, List<Object>> possibleCategories;
+public class ParseCategorical<T> implements Function<T,Integer> {
+    private final List<T> possibleCategories;
 
-    public ParseCategorical(Map<T, List<Object>> possibleCategories, T... columnKeys) {
-        super(columnKeys);
+    public ParseCategorical(List<T> possibleCategories) {
         this.possibleCategories = possibleCategories;
     }
 
-    public static <T> Map<T, List<Object>> collectCategories(Iterator<Record<Map<T, Object>>> iterator, T... columnNames) {
-        Map<T, Set<Object>> categoriesPerColumn = new HashMap<>();
+    public static <T, K> Map<T, List<K>> collectCategories(Iterator<Record<Map<T, K>>> iterator, T... columnNames) {
+        Map<T, Set<K>> categoriesPerColumn = new HashMap<>();
 
         while(iterator.hasNext()) {
-            Map<T, Object> map = iterator.next().getValue();
+            Map<T, K> map = iterator.next().getValue();
             if(columnNames.length == 0) {
                 columnNames = map.keySet().toArray(columnNames);
             }
 
             for (T columnName : columnNames) {
-                Object category = map.get(columnName);
-                Set<Object> set = categoriesPerColumn.get(columnName);
+                K category = map.get(columnName);
+                Set<K> set = categoriesPerColumn.get(columnName);
                 if(set == null) {
                     set = new HashSet<>();
                     categoriesPerColumn.put(columnName, set);
@@ -35,9 +35,9 @@ public class ParseCategorical<T> extends SubsetOfColumnsFunction<T, String, Obje
             }
         }
 
-        HashMap<T, List<Object>> result = new HashMap<>();
-        for (Entry<T, Set<Object>> entry : categoriesPerColumn.entrySet()) {
-            List<Object> list = new ArrayList<>(entry.getValue());
+        HashMap<T, List<K>> result = new HashMap<>();
+        for (Entry<T, Set<K>> entry : categoriesPerColumn.entrySet()) {
+            List<K> list = new ArrayList<>(entry.getValue());
             if(list.get(0) instanceof Comparable){
                 Collections.sort((List)list);
             }
@@ -47,8 +47,9 @@ public class ParseCategorical<T> extends SubsetOfColumnsFunction<T, String, Obje
     }
 
     @Override
-    protected void parseColumn(Map<T, Object> value, T columnName) {
-        int index = this.possibleCategories.get(columnName).indexOf(value.get(columnName));
-        value.put(columnName, index);
+    public void apply(Record<T> input, ResultCallback<Integer> callback) {
+        T value = input.getValue();
+        int idx = this.possibleCategories.indexOf(value);
+        callback.yield(input.withValue(idx));
     }
 }

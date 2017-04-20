@@ -1,4 +1,4 @@
-package tech.dubs.ingest.functions.nlp;
+package tech.dubs.ingest.functions.nlp.simple;
 
 import tech.dubs.ingest.api.Function;
 import tech.dubs.ingest.api.Pipeline;

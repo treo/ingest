@@ -6,14 +6,14 @@ import tech.dubs.ingest.api.ResultCallback;
 
 import java.util.Map;
 
-public abstract class SubsetOfColumnsFunction<T, X, O> implements Function<Map<T, X>, Map<T, O>> {
-    private final T[] columnNames;
+public abstract class SubsetOfColumnsFunction<T, U, X, O> implements Function<Map<T, X>, Map<U, O>> {
+    protected T[] columnNames;
 
     public SubsetOfColumnsFunction(T... columnNames) {
         this.columnNames = columnNames;
     }
 
-    public void apply(Record<Map<T, X>> param, ResultCallback<Map<T, O>> callback) {
+    public void apply(Record<Map<T, X>> param, ResultCallback<Map<U, O>> callback) {
         Map<T, O> value = (Map<T, O>) param.getValue();
         if(this.columnNames.length > 0) {
             for (T columnName : this.columnNames) {
@@ -25,7 +25,7 @@ public abstract class SubsetOfColumnsFunction<T, X, O> implements Function<Map<T
             }
         }
 
-        callback.yield(param.withValue(value));
+        callback.yield(param.withValue((Map<U, O>)value));
     }
 
     protected abstract void parseColumn(Map<T, O> value, T columnName);

@@ -1,7 +1,8 @@
-package tech.dubs.ingest.functions.nlp;
+package tech.dubs.ingest.functions.nlp.simple;
 
 import org.junit.Test;
 import tech.dubs.ingest.api.Record;
+import tech.dubs.ingest.functions.nlp.simple.BagOfWords;
 import tech.dubs.ingest.pipelines.PipelineUtils;
 
 import java.util.Arrays;
