@@ -7,26 +7,25 @@ import tech.dubs.ingest.util.CallbackValue;
 
 import java.util.Map;
 
-public class ApplyToKeys<T, O, P, Q> implements Function<Map<T, O>, Map<T, Q>> {
+public class ApplyToKeys<T, X, Y> implements Function<Map<T, X>, Map<T, Y>> {
 
     private final T[] columnNames;
-    private final Function<O, P> fn;
+    private final Function fn;
 
-    public ApplyToKeys(Function<O, P> fn, T... columnNames) {
+    public ApplyToKeys(Function<?, ?> fn, T... columnNames) {
         this.columnNames = columnNames;
         this.fn = fn;
     }
 
     @Override
-    public void apply(Record<Map<T, O>> input, ResultCallback<Map<T, Q>> callback) {
-        Map<T, O> map = input.getValue();
-        Map<T, Q> casted = (Map<T, Q>) map;
+    public void apply(Record<Map<T, X>> input, ResultCallback<Map<T, Y>> callback) {
+        Map map = input.getValue();
         for (T columnName : columnNames) {
-            O value = map.get(columnName);
-            CallbackValue<P> c = new CallbackValue<>();
+            Object value = map.get(columnName);
+            CallbackValue<?> c = new CallbackValue<>();
             fn.apply(input.withValue(value), c);
-            casted.put(columnName, (Q)c.getResult().getValue());
+            map.put(columnName, c.getResult().getValue());
         }
-        callback.yield(input.withValue(casted));
+        callback.yield(input.<Map<T, Y>>withValue(map));
     }
 }

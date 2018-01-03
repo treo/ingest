@@ -7,8 +7,9 @@ import tech.dubs.ingest.api.Record;
 import tech.dubs.ingest.api.ResultCallback;
 
 import java.util.Arrays;
+import java.util.List;
 
-public class MaxEntropyTokenizer implements Function<String, Object> {
+public class MaxEntropyTokenizer implements Function<String, List<String>> {
 
     private final TokenizerME tokenizerME;
 
@@ -17,9 +18,9 @@ public class MaxEntropyTokenizer implements Function<String, Object> {
     }
 
     @Override
-    public void apply(Record<String> input, ResultCallback<Object> callback) {
+    public void apply(Record<String> input, ResultCallback<List<String>> callback) {
         String value = input.getValue();
         String[] strings = tokenizerME.tokenize(value);
-        callback.yield(input.withValue((Object)Arrays.asList(strings)));
+        callback.yield(input.withValue(Arrays.asList(strings)));
     }
 }

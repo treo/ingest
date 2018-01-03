@@ -35,6 +35,6 @@ public class Record<T> {
     }
 
     public <O> Record<O> withValue(O value) {
-        return new Record<>(value, this.meta);
+        return new Record<>(value, new HashMap<>(this.meta));
     }
 }

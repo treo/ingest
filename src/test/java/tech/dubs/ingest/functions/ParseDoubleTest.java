@@ -22,7 +22,7 @@ public class ParseDoubleTest {
         String csv = "id,name,value\n7,foo,bar\n18,spam,eggs\n9,a,bar";
         Pipeline<String, Map<String, Object>> pipeline = new SerialPipeline<String, String>()
                 .add(new ParseCsvWithHeader())
-                .add(new ApplyToKeys<>(new ParseDouble(), "id"));
+                .add(new ApplyToKeys<String, String, Object>(new ParseDouble(), "id"));
 
         List<Record<Map<String, Object>>> records = PipelineUtils.applyPipeline(pipeline, new Record<>(csv));
         Iterator<Map<String, Object>> maps = PipelineUtils.unwrapRecordValues(records.iterator());

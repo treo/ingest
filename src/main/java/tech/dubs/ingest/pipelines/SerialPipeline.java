@@ -11,6 +11,10 @@ import java.util.*;
 public class SerialPipeline<T, O> implements Pipeline<T, O> {
     private final List<Function<T, O>> functions;
 
+    public static <U, P> Pipeline<U, P> from(Function<U, P> fn){
+        return new SerialPipeline<U, U>().add(fn);
+    }
+
     public SerialPipeline() {
         this(new LinkedList<Function<T, O>>());
     }

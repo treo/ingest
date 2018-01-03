@@ -36,7 +36,7 @@ public class ParseCategoricalTest {
 
         Pipeline<String, Map<String, Object>> pipeline = new SerialPipeline<String, String>()
                 .add(new ParseCsvWithHeader())
-                .add(new ApplyToKeys<>(new ParseCategorical<>(categories.get("value")), "value"));
+                .add(new ApplyToKeys<String, String, Object>(new ParseCategorical<>(categories.get("value")), "value"));
 
         List<Record<Map<String, Object>>> records = PipelineUtils.applyPipeline(pipeline, new Record<>(csv));
         Iterator<Map<String, Object>> maps = PipelineUtils.unwrapRecordValues(records.iterator());
